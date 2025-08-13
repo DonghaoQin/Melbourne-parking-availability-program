@@ -1,10 +1,12 @@
+# app.py  —— 单文件可运行版本（内嵌 HTML），数据从 Railway Postgres 读取
+# 依赖：pip install flask pandas numpy sqlalchemy psycopg2-binary
+
 from flask import Flask, request, render_template_string
 import pandas as pd
 import numpy as np
 import os
 from sqlalchemy import create_engine
 
-# --- kept from topic2: timezone & weekday labels ---
 AUS_TZ = "Australia/Melbourne"
 WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
@@ -148,7 +150,7 @@ INDEX_HTML = r"""<!doctype html>
 </html>
 """
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 def to_str_strip(series: pd.Series) -> pd.Series:
     return series.astype("string").fillna("").str.strip()
@@ -289,7 +291,5 @@ def index():
         fallback=fallback
     )
 
-if _name_ == "_main_":
-    # use env PORT if present (deploy-friendly), otherwise 5000
-    port = int(os.environ.get("PORT", "5000"))
-    app.run(host="0.0.0.0", port=port, debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
